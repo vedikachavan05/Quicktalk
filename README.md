@@ -1,6 +1,7 @@
 
 
-## Chat Application – Project Description
+## Quicktalk:Chat Application based on firebase
+– Project Description
 
 Overview:
 A real-time web-based chat application that allows users to create or join chat rooms and exchange messages instantly. The project demonstrates real-time communication using **Firebase Realtime Database**, combined with HTML, CSS, and JavaScript for the frontend.
