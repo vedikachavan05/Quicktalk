@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QuickTalk • Rooms</title>
+
+  <!-- Optional: link your CSS when you’re ready -->
+  <link rel="stylesheet" href="styles/chat.css" />
+
+  <!-- For now we won’t add JS logic; we just set IDs for later -->
+  
+</head>
+
+
+
+
+
+
+
+<body>
+  <header>
+    <h1>QuickTalk</h1>
+    <nav>
+      <a href="login.html" id="logout-link">Logout</a>
+    </nav>
+  </header>
+
+  <nav class="navbar">
+  <div class="nav-left">
+    <h1>QuickTalk</h1>
+  </div>
+
+  <div class="nav-center">
+    <span id="current-room">Room: General</span>
+  </div>
+
+  <div class="nav-right">
+    <button id="create-room">+ Room</button>
+    <button id="manage-members">👥</button>
+    <button id="leave-room">↩</button>
+    <a href="login.html" id="logout">Logout</a>
+  </div>
+</nav>
+
+<main>
+  <!-- Rooms sidebar -->
+  <aside id="rooms-sidebar" class="card">
+    <h2>Rooms</h2>
+    <ul id="room-list">
+      <li>General</li>
+      <li>Random</li>
+      <li>Project A</li>
+    </ul>
+    
+  </aside>
+
+  <!-- Chat interface -->
+  <section id="chat-section" class="card">
+    <header class="chat-header">
+      <h2>Chat Room: General</h2>
+      <button id="leave-room">Leave</button>
+    </header>
+
+    <div id="chat-box">
+      <p><b>User1:</b> Hello!</p>
+      <p><b>User2:</b> Hi there 👋</p>
+    </div>
+
+    <form id="chat-form">
+      <input type="text" id="chat-input" placeholder="Type a message..." required />
+      <button type="submit">Send</button>
+    </form>
+  </section>
+</main>
+
+<footer>
+    <small>© <span id="year"></span> QuickTalk</small>
+  </footer>
+
+  <!-- Optional: tiny inline script just to set the year; real logic comes later -->
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- Later you’ll add: <script src="scripts/rooms.js"></script> -->
+</body>
+</html>
