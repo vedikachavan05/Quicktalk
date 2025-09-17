@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>QuickTalk • Rooms</title>
+
+
+
+    <link rel="stylesheet" href="chat.css" />
+
+</head>
+
+
+
+<body>
+
+  <nav class="navbar">
+
+  <div class="nav-left">
+
+    <h1>QuickTalk</h1>
+
+  </div>
+
+
+
+  <div class="nav-center">
+
+    <span id="current-room">Room: General</span>
+
+  </div>
+
+
+
+  <div class="nav-right">
+
+    <button id="create-room">+ Room</button>
+
+    <button id="leave-room">->Leave</button>
+
+    <a href="index.html" id="logout">Logout</a>
+
+  </div>
+
+</nav>
+
+
+
+<main>
+
+    <aside id="rooms-sidebar" class="card">
+
+    <h2>Rooms</h2>
+
+    <ul id="room-list">
+
+      <li>General</li>
+
+      <li>Random</li>
+
+      <li>Project A</li>
+
+    </ul>
+
+  </aside>
+
+
+
+    <section id="chat-section" class="card">
+
+   
+
+
+
+    <div id="chat-box">
+
+      <div id="messagesContainer">
+
+              </div>
+
+    </div>
+
+
+
+    <form id="chat-form">
+
+      <input type="text" id="messageInput" placeholder="Type a message..." required />
+
+      <button id="sendBtn" type="submit" >Send</button>
+
+    </form>
+
+  </section>
+
+</main>
+
+
+
+<footer>
+
+    <small>© <span id="year"></span> QuickTalk</small>
+
+  </footer>
+
+ 
+
+<script type="module" src="chat.js"></script>
+
+<script>
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+</script>
+
+</body>
+
+</html> 

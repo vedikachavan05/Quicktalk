@@ -1,0 +1,243 @@
+/* General Styling for the Chat Page */
+
+* {
+ box-sizing: border-box;
+}
+
+
+
+body {
+    margin: 0;
+    font-family: system-ui, Arial, sans-serif;
+    background: #f7f7fb;
+    color: #111;
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Set the body to the full viewport height */
+}
+
+
+
+
+/* Navbar: QuickTalk logo, room name, and buttons */
+
+.navbar {
+
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 12px 20px;
+ background: #111;
+color: #fff;
+ border-bottom: 2px solid #222;
+}
+
+
+
+.nav-left h1 {
+ margin: 0;
+font-size: 20px;
+}
+
+
+
+.nav-center {
+font-size: 16px;
+font-weight: bold;
+flex-grow: 1; /* Allows it to take up available space */
+text-align: center; /* Centers the room name */
+
+}
+
+
+.chat-container {
+display: flex;
+flex-direction: column;
+height: 100%;
+}
+
+
+
+
+
+.messages-container {
+flex: 1; /* This makes it fill the available vertical space */
+ overflow-y: auto; /* This adds a vertical scrollbar when needed */
+ padding: 20px;
+
+}
+
+
+
+
+
+.chat-input {
+
+display: flex;
+padding: 10px;
+
+}
+
+
+
+.nav-right button,
+.nav-right a {
+ margin-left: 10px;
+padding: 6px 12px;
+background: #444;
+color: #fff;
+border: none;
+border-radius: 6px;
+cursor: pointer;
+text-decoration: none;
+
+}
+
+
+
+.nav-right button:hover,
+.nav-right a:hover {
+
+background: #666;
+
+}
+
+
+
+/* Main content area (sidebar and chat section) */
+
+main {
+    display: flex;
+    flex: 1; /* This is the key: it makes main fill the remaining space */
+    gap: 16px;
+    padding: 16px;
+    overflow: hidden; /* This prevents the entire body from scrolling */
+}
+
+
+/* Rooms sidebar */
+
+#rooms-sidebar {
+    flex: 1;
+    max-width: 250px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 16px;
+    /* Removed overflow-y: auto from here, as the chat messages are the focus */
+}
+
+
+
+/* Room list styling */
+
+#room-list {
+list-style: none;
+ padding: 0;
+ margin: 0;
+}
+
+
+
+#room-list li {
+padding: 12px; /* Increased padding for more space */
+border-bottom: 1px solid #ddd; /* Adds a line below each room */
+cursor: pointer;
+ transition: background-color 0.2s;
+
+}
+
+
+
+#room-list li:hover {
+ background-color: #f0f0f0;
+
+}
+
+
+
+/* Chat section */
+
+#chat-section {
+    flex: 3;
+    display: flex;
+    flex-direction: column; /* Stacks children vertically */
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+
+
+/* Chat area grows and scrolls */
+
+#chat-box {
+    flex: 1; /* This makes the chat-box fill all available vertical space */
+    overflow-y: auto; /* This adds a vertical scrollbar when needed */
+    margin: 0; /* Important: remove top/bottom margin */
+    padding: 8px; /* Add padding inside the scrollable box for messages */
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: #fafafa;
+}
+
+
+/* Chat message bubbles */
+
+.message {
+
+ background-color: #e2eafc;
+ padding: 12px 16px;
+ border-radius: 18px;
+ margin-bottom: 10px;
+ max-width: 70%;
+ word-wrap: break-word;
+
+}
+
+
+
+/* Chat form for message input */
+
+#chat-form {
+ display: flex;
+ gap: 8px;
+
+}
+
+
+
+#messageInput {
+
+ flex-grow: 1; /* Allows the input to take up all available space */
+ padding: 12px;
+ border: 1px solid #ccc;
+ border-radius: 8px;
+
+}
+
+
+
+#sendBtn {
+
+padding: 12px 20px;
+ border: none;
+border-radius: 8px;
+ background: #111;
+ color: #fff;
+ cursor: pointer;
+
+}
+
+
+
+/* Footer styling */
+
+footer {
+
+ padding: 12px 16px;
+ background: #fff;
+ border-top: 1px solid #eee;
+ text-align: center;
+}
