@@ -1,0 +1,84 @@
+/* Media query for smaller screens (e.g., tablets and phones) */
+@media (max-width: 768px) {
+    /* Main content container */
+    main {
+        flex-direction: column; /* Stack the sidebar and chat section vertically */
+        padding: 8px; /* Reduce padding on smaller screens */
+        gap: 8px; /* Reduce the gap between elements */
+    }
+
+    /* Sidebar adjustments */
+    #rooms-sidebar {
+        max-width: 100%; /* Make the sidebar full width */
+        order: 2; /* Move the sidebar below the chat section */
+        display: none; /* Hide the sidebar by default */
+    }
+    
+    /* Show the sidebar when it has a 'visible' class */
+    #rooms-sidebar.visible {
+        display: flex; /* Or display: block; depending on your layout */
+    }
+
+    /* Chat section adjustments */
+    #chat-section {
+        flex: none; /* Disable flex-sizing for chat section */
+        width: 100%; /* Make the chat section full width */
+        padding: 8px;
+        order: 1; /* Move the chat section above the sidebar */
+    }
+
+    /* Message input form */
+    #chat-form {
+        flex-direction: column; /* Stack the input and button */
+        gap: 5px;
+    }
+
+    /* Make the input and button full-width */
+    #messageInput, #sendBtn {
+        width: 100%;
+    }
+}
+
+
+
+/* General Styling for the Chat Page */
+body {
+    margin: 0;
+    font-family: system-ui, Arial, sans-serif;
+    background: #f7f7fb;
+    color: #111;
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Set the body to the full viewport height */
+}
+
+/* Main content area (sidebar and chat section) */
+main {
+    display: flex;
+    flex: 1; /* This is the key: it makes main fill the remaining space */
+    gap: 16px;
+    padding: 16px;
+    overflow: hidden; /* This prevents the entire body from scrolling */
+}
+
+/* Rooms sidebar */
+#rooms-sidebar {
+    flex: 1;
+    max-width: 250px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 16px;
+    /* Removed overflow-y: auto from here, as the chat messages are the focus */
+}
+
+/* Chat section */
+#chat-section {
+    flex: 3;
+    display: flex;
+    flex-direction: column; /* Stacks children vertically */
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 16px;
+}
