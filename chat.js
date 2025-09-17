@@ -34,6 +34,9 @@ const currentRoomDisplay = document.getElementById('current-room');
 const logoutBtn = document.getElementById('logout');
 const createRoomBtn = document.getElementById('create-room');
 const leaveRoomBtn = document.getElementById('leave-room');
+const toggleSidebarBtn = document.getElementById('toggle-sidebar');
+const roomsSidebar = document.getElementById('rooms-sidebar');
+
 
 // Set the initial chat room
 let currentRoom = "General";
@@ -48,11 +51,11 @@ async function requestNotificationPermission() {
                 vapidKey: vapidKey
             });
             console.log("FCM Token: ", token);
-            
+
             // Save this token to the current user's document in Firestore
             const userRef = doc(db, 'users', auth.currentUser.uid);
             await setDoc(userRef, { fcmToken: token }, { merge: true });
-            
+
         } else {
             console.log("Permission denied for notifications.");
         }
@@ -67,7 +70,7 @@ onMessage(messaging, (payload) => {
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
-        icon: '/images/quicktalk-logo.png'
+        icon: 'images/quicktalk-logo.png' // Changed path for GitHub Pages compatibility
     };
     new Notification(notificationTitle, notificationOptions);
 });
@@ -75,7 +78,6 @@ onMessage(messaging, (payload) => {
 // Check if user is logged in
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        // Call this function when the user is logged in
         requestNotificationPermission();
         setupMessageListener(currentRoom);
     } else {
@@ -84,10 +86,9 @@ onAuthStateChanged(auth, (user) => {
 });
 
 // Event listener for sending messages
-// Event listener for sending messages
 if (chatForm) {
     chatForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); // <--- Add this line
+        e.preventDefault();
         const messageText = messageInput.value;
         if (messageText.trim() === '') return;
         try {
@@ -149,10 +150,10 @@ function setupMessageListener(roomId) {
             messagesContainer.appendChild(messageElement);
         }
 
-        // Add this line to enable auto-scrolling to the bottom of the chat window
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     });
 }
+
 // Event listener to change rooms
 if (roomList) {
     roomList.addEventListener('click', (e) => {
@@ -163,24 +164,6 @@ if (roomList) {
         }
     });
 }
-const toggleSidebarBtn = document.getElementById('toggle-sidebar');
-const roomsSidebar = document.getElementById('rooms-sidebar');
-
-if (toggleSidebarBtn && roomsSidebar) {
-    toggleSidebarBtn.addEventListener('click', () => {
-        roomsSidebar.classList.toggle('visible');
-    });
-}
-
-// Display available rooms
-onSnapshot(collection(db, "rooms"), (snapshot) => {
-    let roomsHtml = '';
-    snapshot.forEach((doc) => {
-        roomsHtml += `<li data-id="${doc.id}">${doc.id}</li>`;
-    });
-    roomList.innerHTML = roomsHtml;
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-});
 
 // Add a click listener to the create-room button
 createRoomBtn.addEventListener('click', async () => {
@@ -191,26 +174,3 @@ createRoomBtn.addEventListener('click', async () => {
             await setDoc(doc(roomsCollection, roomName), {});
             console.log("New room created:", roomName);
         } catch (error) {
-            console.error("Error creating room:", error);
-            alert("Failed to create room. It may already exist.");
-        }
-    }
-});
-
-// Event listener for the "Leave Room" button
-if (leaveRoomBtn) {
-    leaveRoomBtn.addEventListener('click', () => {
-        if (unsubscribeFromMessages) {
-            unsubscribeFromMessages();
-        }
-        currentRoom = "General";
-        currentRoomDisplay.textContent = `Room: ${currentRoom}`;
-        setupMessageListener(currentRoom);
-    });
-}
-
-// Event listener for the logout button
-logoutBtn.addEventListener('click', async () => {
-    await signOut(auth);
-    window.location.href = "index.html";
-});
