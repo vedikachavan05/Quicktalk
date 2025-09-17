@@ -6,10 +6,7 @@
         gap: 8px;
     }
 
-    .nav-right,
-    .nav-center {
-        display: none;
-    }
+
 
     #rooms-sidebar {
         max-width: 100%;
@@ -36,6 +33,16 @@
     #messageInput, #sendBtn {
         width: 100%;
     }
+
+    .nav-right,
+    .nav-center {
+        display: none;
+    }
+
+        #toggle-sidebar{
+            display: block;
+        }
+
 }
 
 * {
