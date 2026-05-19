@@ -63,6 +63,7 @@ signUpButton.addEventListener('click', (e) => {
             alert("Account created successfully!");
             window.location.href = "chat.html"; // Redirect to the chat page
         })
+<<<<<<< HEAD
         
           .catch((error) => {
     const messageEl = document.getElementById('message');
@@ -71,4 +72,10 @@ signUpButton.addEventListener('click', (e) => {
     setTimeout(() => { messageEl.textContent = ''; }, 5000);
 });
         
+=======
+        .catch((error) => {
+            console.error("Sign up failed:", error.message);
+            alert(`Sign up failed: ${error.message}`);
+        });
+>>>>>>> 20367da762cf6d3749a91b7b88ac82ec2c244b6c
 });

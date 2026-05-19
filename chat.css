@@ -1,42 +1,61 @@
 /* ==========================================
    1. MOBILE STYLES (Max-width: 768px)
+ /* ==========================================
+   1. MOBILE STYLES (Max-width: 768px)
    ========================================== */
 @media (max-width: 768px) {
     main {
         display: flex;
         flex: 1; 
-        gap:10px;
-        padding: 0px 16px 16px 16px; 
-        /* Bridge the gap with the navbar color */
-        
+        gap: 10px;
+        /* Balanced padding for mobile screens */
+        padding: 10px 16px 16px 16px; 
         overflow: hidden;
+        position: relative; /* Essential context for floating the mobile sidebar */
+        /* Re-applied matching purple background block for top gap continuity */
+        background: linear-gradient(to bottom, #867ef6 0px, #867ef6 10px, #f7f7fb 10px, #f7f7fb 100%);
     }
 
+    /* Fixed responsiveness: Hide sidebar completely until toggled */
     #rooms-sidebar {
-        max-width: 100%;
-        order: 2;
-        display: none;
+        display: none; 
+        position: absolute;
+        top: 0;
+        left: 16px;
+        z-index: 99;
+        width: calc(100% - 32px);
+        max-width: 280px;
+        height: calc(100% - 16px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
     
-    #rooms-sidebar.visible {
-        display: flex; 
+    /* Show the sidebar dynamically when user clicks the "Rooms" button */
+    #rooms-sidebar.active {
+        display: flex !important;
+        flex-direction: column;
     }
 
     #chat-section {
-        flex: none;
+        flex: 1; /* Changed from none to 1 so the chat window expands properly on phones */
         width: 100%;
-        padding: 8px 8px;
+        padding: 12px;
         order: 1;
         background-color: #142e59;
     }
 
     #chat-form {
-        flex-direction: column;
-        gap: 5px;
+        display: flex;
+        flex-direction: row; /* Keeps message input and send button next to each other on tiny screens */
+        gap: 8px;
     }
 
-    #messageInput, #sendBtn {
-        width: 100%;
+    #messageInput {
+        flex-grow: 1;
+        width: auto;
+    }
+
+    #sendBtn {
+        width: auto;
     }
 
     .nav-right, .nav-center {
@@ -44,10 +63,9 @@
     }
 
     #toggle-sidebar {
-        display: block;
+        display: block; /* Ensures the responsive button shows up */
     }
 }
-
 /* ==========================================
    2. GENERAL & LAYOUT RESET
    ========================================== */
