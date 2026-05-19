@@ -1,7 +1,7 @@
 // Import all the necessary Firebase functions
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getFirestore, collection, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -63,19 +63,16 @@ signUpButton.addEventListener('click', (e) => {
             alert("Account created successfully!");
             window.location.href = "chat.html"; // Redirect to the chat page
         })
-<<<<<<< HEAD
-        
-          .catch((error) => {
-    const messageEl = document.getElementById('message');
-    messageEl.textContent = `Error: ${error.message}`;
-    // Optional: auto-hide after 5 seconds
-    setTimeout(() => { messageEl.textContent = ''; }, 5000);
-});
-        
-=======
         .catch((error) => {
             console.error("Sign up failed:", error.message);
-            alert(`Sign up failed: ${error.message}`);
+            
+            // Display error to UI element if it exists
+            const messageEl = document.getElementById('message');
+            if (messageEl) {
+                messageEl.textContent = `Error: ${error.message}`;
+                setTimeout(() => { messageEl.textContent = ''; }, 5000);
+            } else {
+                alert(`Sign up failed: ${error.message}`);
+            }
         });
->>>>>>> 20367da762cf6d3749a91b7b88ac82ec2c244b6c
 });
