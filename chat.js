@@ -1,9 +1,8 @@
 // Import all the necessary Firebase functions and modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, getDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, getDoc, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-messaging.js";
-import { serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -22,10 +21,9 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const messaging = getMessaging(app);
 
-// IMPORTANT: Replace 'YOUR_VAPID_KEY' with your actual VAPID key from Firebase Project Settings
-const vapidKey = 'YOUR_VAPID_KEY';
+const vapidKey = 'YOUR_VAPID_KEY'; // Ensure this is replaced with your actual key
 
-// Get references to HTML elements
+// HTML Element References
 const chatForm = document.getElementById('chat-form');
 const messageInput = document.getElementById('messageInput');
 const messagesContainer = document.getElementById('messagesContainer');
@@ -35,47 +33,13 @@ const logoutBtn = document.getElementById('logout');
 const createRoomBtn = document.getElementById('create-room');
 const leaveRoomBtn = document.getElementById('leave-room');
 
-// Set the initial chat room
 let currentRoom = "General";
 let unsubscribeFromMessages = null;
 
-// Function to request notification permission and get the FCM token
-async function requestNotificationPermission() {
-    try {
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-            const token = await getToken(messaging, {
-                vapidKey: vapidKey
-            });
-            console.log("FCM Token: ", token);
-            
-            // Save this token to the current user's document in Firestore
-            const userRef = doc(db, 'users', auth.currentUser.uid);
-            await setDoc(userRef, { fcmToken: token }, { merge: true });
-            
-        } else {
-            console.log("Permission denied for notifications.");
-        }
-    } catch (error) {
-        console.error("Error getting permission or token: ", error);
-    }
-}
+// --- Authentication & Permissions ---
 
-// Handle incoming messages while the app is in the foreground
-onMessage(messaging, (payload) => {
-    console.log("Message received. ", payload);
-    const notificationTitle = payload.notification.title;
-    const notificationOptions = {
-        body: payload.notification.body,
-        icon: '/images/quicktalk-logo.png'
-    };
-    new Notification(notificationTitle, notificationOptions);
-});
-
-// Check if user is logged in
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        // Call this function when the user is logged in
         requestNotificationPermission();
         setupMessageListener(currentRoom);
     } else {
@@ -83,26 +47,21 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-// Event listener for sending messages
-if (chatForm) {
-    chatForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const messageText = messageInput.value;
-        if (messageText.trim() === '') return;
-        try {
-            await addDoc(collection(db, "rooms", currentRoom, "messages"), {
-                text: messageText,
-                sender: auth.currentUser.uid,
-                timestamp: serverTimestamp() // Use serverTimestamp() for consistency
-            });
-            messageInput.value = '';
-        } catch (error) {
-            console.error("Error adding message: ", error);
+async function requestNotificationPermission() {
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            const token = await getToken(messaging, { vapidKey: vapidKey });
+            const userRef = doc(db, 'users', auth.currentUser.uid);
+            await setDoc(userRef, { fcmToken: token }, { merge: true });
         }
-    });
+    } catch (error) {
+        console.error("Notification error: ", error);
+    }
 }
 
-// Function to set up the real-time listener for a specific room
+// --- Chat Logic ---
+
 function setupMessageListener(roomId) {
     if (unsubscribeFromMessages) {
         unsubscribeFromMessages();
@@ -115,32 +74,29 @@ function setupMessageListener(roomId) {
         for (const messageDoc of snapshot.docs) {
             const message = messageDoc.data();
             const senderId = message.sender;
+            const isMe = (senderId === auth.currentUser.uid);
 
-            const userDocRef = doc(db, "users", senderId);
-            const userDoc = await getDoc(userDocRef);
-            let senderName = "Unknown User";
-            if (userDoc.exists()) {
-                senderName = userDoc.data().username;
-            }
+            const userDoc = await getDoc(doc(db, "users", senderId));
+            let senderName = userDoc.exists() ? userDoc.data().username : "Unknown User";
 
-            // 1. Handle Timestamp
             let formattedTime = "";
-            if (message.timestamp && message.timestamp.toDate) {
-                const date = message.timestamp.toDate();
-                formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            if (message.timestamp?.toDate) {
+                formattedTime = message.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             }
 
-            // 2. Handle Text Formatting
-            let formattedText = message.text;
-            formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-            formattedText = formattedText.replace(/\*(.*?)\*/g, '<i>$1</i>');
-            formattedText = formattedText.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+            // Markdown-style formatting
+            let formattedText = message.text
+                .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                .replace(/\*(.*?)\*/g, '<i>$1</i>')
+                .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
 
             const messageElement = document.createElement("div");
             messageElement.classList.add('message');
+            if (isMe) messageElement.classList.add('my-message');
+
             messageElement.innerHTML = `
                 <div class="message-header">
-                    <span class="username">${senderName}:</span>
+                    <span class="username">${isMe ? 'You' : senderName}:</span>
                     <span class="timestamp">${formattedTime}</span>
                 </div>
                 <div class="message-text">${formattedText}</div>
@@ -151,7 +107,36 @@ function setupMessageListener(roomId) {
     });
 }
 
-// Event listener to change rooms
+if (chatForm) {
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const text = messageInput.value.trim();
+        if (!text) return;
+        try {
+            await addDoc(collection(db, "rooms", currentRoom, "messages"), {
+                text: text,
+                sender: auth.currentUser.uid,
+                timestamp: serverTimestamp()
+            });
+            messageInput.value = '';
+        } catch (error) {
+            console.error("Send error: ", error);
+        }
+    });
+}
+
+// --- Room Management ---
+
+// Display available rooms from Firestore
+onSnapshot(collection(db, "rooms"), (snapshot) => {
+    let roomsHtml = '';
+    snapshot.forEach((doc) => {
+        roomsHtml += `<li data-id="${doc.id}">${doc.id}</li>`;
+    });
+    roomList.innerHTML = roomsHtml;
+});
+
+// Switch rooms via sidebar
 if (roomList) {
     roomList.addEventListener('click', (e) => {
         if (e.target.tagName === 'LI') {
@@ -162,44 +147,39 @@ if (roomList) {
     });
 }
 
-// Display available rooms
-onSnapshot(collection(db, "rooms"), (snapshot) => {
-    let roomsHtml = '';
-    snapshot.forEach((doc) => {
-        roomsHtml += `<li data-id="${doc.id}">${doc.id}</li>`;
-    });
-    roomList.innerHTML = roomsHtml;
-});
-
-// Add a click listener to the create-room button
+// Create a new room
 createRoomBtn.addEventListener('click', async () => {
     const roomName = prompt("Enter a name for the new room:");
-    if (roomName && roomName.trim() !== '') {
-        const roomsCollection = collection(db, "rooms");
+    if (roomName?.trim()) {
         try {
-            await setDoc(doc(roomsCollection, roomName), {});
-            console.log("New room created:", roomName);
+            await setDoc(doc(db, "rooms", roomName.trim()), {});
         } catch (error) {
-            console.error("Error creating room:", error);
-            alert("Failed to create room. It may already exist.");
+            console.error("Room creation error: ", error);
         }
     }
 });
 
-// Event listener for the "Leave Room" button
-if (leaveRoomBtn) {
-    leaveRoomBtn.addEventListener('click', () => {
-        if (unsubscribeFromMessages) {
-            unsubscribeFromMessages();
-        }
+/**
+ * FIX: LEAVE ROOM FUNCTIONALITY
+ * Switches back to 'General' room without a page reload.
+ */
+leaveRoomBtn.addEventListener('click', () => {
+    if (currentRoom === "General") {
+        alert("You are already in the General room.");
+        return;
+    }
+    
+    if (confirm("Are you sure you want to leave this room and go back to General?")) {
         currentRoom = "General";
         currentRoomDisplay.textContent = `Room: ${currentRoom}`;
         setupMessageListener(currentRoom);
-    });
-}
+        console.log("Returned to General room.");
+    }
+});
 
-// Event listener for the logout button
-logoutBtn.addEventListener('click', async () => {
+// --- Logout ---
+logoutBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
     await signOut(auth);
     window.location.href = "index.html";
 });
